@@ -48,6 +48,7 @@ onload = function () {
         }
         contact_list.add(details[1], details[0]);
         //info.innerHTML += details + " added to contact list<br>";
+        alert('The number has been added to the contact list!!! Now you will be able to search it in the searchbox!')
         //updateContactList();
         contact_info.value = "";
     };
@@ -60,6 +61,7 @@ onload = function () {
         }
         contact_list.del(details);
         //info.innerHTML += details + " deleted from contact list<br>";
+        alert("The number has been deleted from the contact list!!! Now you won't find it in the searchbox!")
         //updateContactList();
         delete_info.value = "";
     };
