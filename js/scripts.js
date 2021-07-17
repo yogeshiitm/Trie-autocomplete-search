@@ -1,5 +1,5 @@
 
-import {Trie} from './Trie.js';
+import {Trie} from './tries.js';
 
 onload = function () {
 
