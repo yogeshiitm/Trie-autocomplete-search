@@ -2,9 +2,7 @@
 import {Trie} from './tries.js';
 
 onload = function () {
-
-    //updateContactList();
-
+    /*------------------------------------ PROPERTIES ------------------------------------------------*/
     const templates = document.getElementsByTagName('template')[0];
     const contact_item = templates.content.querySelector("div");
     const add = document.getElementById("add");
@@ -14,25 +12,7 @@ onload = function () {
     const info = document.getElementById("info");
     const contact_list = new Trie();
 
-
-    // function updateContactList(){
-    //     // Update the contact list
-    //     let innerHTML = '';
-    //     let head = this.linked_list;
-    //     while(head!==null){
-    //         let element = head['chat_item'];
-    //         if(head===this.linked_list){
-    //             element.className = "ks-item ks-active";
-    //             element.querySelector('#Time').innerText = this.getTime();
-    //         } else{
-    //             element.className = "ks-item";
-    //         }
-    //         innerHTML += element.outerHTML;
-    //         head = head['next'];
-    //     }
-    //     this.chat_list.innerHTML = innerHTML;
-    // }
-
+    /*--------------------------------------METHOD 1: ADD ---------------------------------------------*/
     add.onclick = function () {
         let details = contact_info.value;
         details = details.split(',');
@@ -47,12 +27,11 @@ onload = function () {
             return;
         }
         contact_list.add(details[1], details[0]);
-        //info.innerHTML += details + " added to contact list<br>";
         alert('The number has been added to the contact list!!! Now you will be able to search it in the searchbox!')
-        //updateContactList();
         contact_info.value = "";
     };
 
+    /*---------------------------------------- METHOD 2: DELETE -----------------------------------------*/
     del.onclick = function () {
         let details = delete_info.value.trim();
         if(details.length!==4){
@@ -60,42 +39,31 @@ onload = function () {
             return;
         }
         contact_list.del(details);
-        //info.innerHTML += details + " deleted from contact list<br>";
         alert("The number has been deleted from the contact list!!! Now you won't find it in the searchbox!")
-        //updateContactList();
         delete_info.value = "";
     };
 
+
+    /*--------------------------------------- METHOD 3: AUTOCOMPLETE ---------------------------------------------*/
     let autocomplete = (inp) => {
-
-        /*the autocomplete function takes two arguments,
-         the text field element and an array of possible autocompleted values:*/
-
         let currentFocus;
         inp.input = "";
 
-        /*execute a function when someone writes in the text field:*/
+        /////////////////////////////////////////////////////////////////////
         inp.addEventListener("input", function (e) {
-            let a, //OUTER html: variable for listed content with html-content
-                val = this.value;
-
-            /*close any already open lists of autocompleted values*/
+            let a,
+            val = this.value;
             closeAllLists();
-
-            if( val.length>=5 )
+            if(val.length>=5){
                 return;
-
+            }
             currentFocus = -1;
 
-            /*create a DIV element that will contain the items (values):*/
             a = document.createElement("DIV");
-
             a.setAttribute("id", this.id + "autocomplete-list");
             a.setAttribute("class", "autocomplete-items list-group text-left");
 
-            /*append the DIV element as a child of the autocomplete container:*/
             this.parentNode.appendChild(a);
-
             let arr = [];
             if(val.length === this.input.length){
                 arr = contact_list.findNext(-2);
@@ -107,76 +75,57 @@ onload = function () {
                 arr = contact_list.findNext(this.input[this.input.length-1]);
             }
 
-            /*for each item in the array...*/
             for (let i = 0; i < Math.min(arr.length,4) ; i++) {
                 let item = contact_item.cloneNode(true);
-                // Setting name, message, image to template item
                 item.querySelector('#Name').innerText = arr[i].name;
                 item.querySelector('#Number').innerHTML = "<strong>" + arr[i].number.substr(0, val.length) + "</strong>" + arr[i].number.substr(val.length);
                 item.number = arr[i].number;
-
-                /*execute a function when someone clicks on the item value (DIV element):*/
                 item.addEventListener("click", function (e) {
-                    /*insert the value for the autocomplete text field:*/
                     inp.value = "";
-                    /*close the list of autocompleted values,
-                     (or any other open lists of autocompleted values:*/
                     closeAllLists();
-                    //alert("Calling "+item.number);
                     document.getElementById("search_input").value = `${item.number}`;
                 });
                 a.appendChild(item);
             }
         });
 
-        /*execute a function presses a key on the keyboard:*/
+        /////////////////////////////////////////////////////////////////////
         inp.addEventListener("keydown", function (e) {
             let x = document.getElementById(this.id + "autocomplete-list");
             if (x) x = x.getElementsByTagName("div");
             if (e.keyCode === 40) {
-                /*If the arrow DOWN key is pressed,
-                 increase the currentFocus variable:*/
                 currentFocus++;
-                /*and and make the current item more visible:*/
                 addActive(x);
             } else if (e.keyCode === 38) {
-                //up
-                /*If the arrow UP key is pressed,
-                 decrease the currentFocus variable:*/
                 currentFocus--;
-                /*and and make the current item more visible:*/
                 addActive(x);
             } else if (e.keyCode === 13) {
-                /*If the ENTER key is pressed, prevent the form from being submitted,*/
                 e.preventDefault();
                 if (currentFocus > -1) {
-                    /*and simulate a click on the "active" item:*/
                     if (x) x[currentFocus*2].click();
                 }
             }
         });
 
+
+        /////////////////////////////////////////////////////////////////////
         let addActive = (x) => {
-            /*a function to classify an item as "active":*/
             if (!x) return false;
-            /*start by removing the "active" class on all items:*/
             removeActive(x);
             if (currentFocus >= x.length) currentFocus = 0;
             if (currentFocus < 0) currentFocus = x.length - 1;
-            /*add class "autocomplete-active":*/
             x[currentFocus*2].classList.add("active");
         };
 
+        /////////////////////////////////////////////////////////////////////
         let removeActive = (x) => {
-            /*a function to remove the "active" class from all autocomplete items:*/
             for (let i = 0; i < x.length; i++) {
                 x[i].classList.remove("active");
             }
         };
 
+        /////////////////////////////////////////////////////////////////////
         let closeAllLists = (elmnt) => {
-            /*close all autocomplete lists in the document,
-             except the one passed as an argument:*/
             const x = document.getElementsByClassName("autocomplete-items");
             for (let i = 0; i < x.length; i++) {
                 if (elmnt !== x[i] && elmnt !== inp) {
@@ -185,12 +134,13 @@ onload = function () {
             }
         };
 
-        /*execute a function when someone clicks in the document:*/
+        /////////////////////////////////////////////////////////////////////
         document.addEventListener("click", function (e) {
             closeAllLists(e.target);
         });
     };
+    /*------------------------------------- AUTOCOMLETE METHOD END -------------------------------------*/
 
-    /*initiate the autocomplete function on the "search_input" element, and pass along the countries array as possible autocomplete values:*/
+    //CALL AUTOMOMPLETE
     autocomplete(document.getElementById("search_input"));
 }; 
