@@ -1,5 +1,6 @@
 export { Trie }
 
+/*------------------------------------------ TRIE NODE ---------------------------------------------*/
 class TrieNode{
     constructor(){
         this.children = Array(10).fill(null);
@@ -7,6 +8,7 @@ class TrieNode{
     }
 }
 
+/*------------------------------------------ CONTACT NODE ---------------------------------------------*/
 class ContactNode{
     constructor(name, number, parent){
         this.name = name;
@@ -15,7 +17,10 @@ class ContactNode{
     }
 }
 
+/*----------------------------------------------- TRIE -----------------------------------------------*/
 class Trie {
+
+    //////////////////////////////////////////////////////// DEFAULT TRIE
     constructor(){
         this.root = new TrieNode();
         this.current = this.root;
@@ -32,13 +37,12 @@ class Trie {
         }
     }
 
+    ///////////////////////////////////////////////////////// ADD NEW CONTACT IN THE TRIE
     add(number, name, pos = 0, node = this.root){
-
         if(pos===number.length-1){
             node.children[number[pos]-'0'] = new ContactNode(name, number, node);
             return;
         }
-
         if(node.children[number[pos]-'0']===null){
             let newnode = new TrieNode();
             node.children[number[pos]-'0'] = newnode;
@@ -47,21 +51,38 @@ class Trie {
         this.add(number, name, pos+1, node.children[number[pos]-'0']);
     }
 
+
+    ///////////////////////////////////////////////////////// DELETE AN EXISTING CONTACT
+    del(number, pos = 0, node = this.root){
+        if(pos===number.length-1){
+            node.children[number[pos]-'0'] = null;
+            return;
+        }
+
+        if(node.children[number[pos]-'0']===null){
+            let newnode = new TrieNode();
+            node.children[number[pos]-'0'] = newnode;
+            newnode.parent = node;
+        }
+        this.del(number, pos+1, node.children[number[pos]-'0']);
+    }
+
+
+    ///////////////////////////////// SEARCH ALL CONTACTS BEGINNING FROM THE TYPED DIGITS
     findAll(node){
         // Contact leaf node
         if(node===null)
             return;
-
         if(node instanceof ContactNode){
             this.res.push(node);
             return;
         }
-
         for(let i=0;i<10;i++){
             this.findAll(node.children[i]);
         }
     }
 
+    /////////////////////////////////////////////////////////
     findNext(step){
         if(step===-1){
             this.current = this.current.parent;
@@ -77,19 +98,5 @@ class Trie {
         this.res = [];
         this.findAll(this.current);
         return this.res;
-    }
-
-    del(number, pos = 0, node = this.root){
-        if(pos===number.length-1){
-            node.children[number[pos]-'0'] = null;
-            return;
-        }
-
-        if(node.children[number[pos]-'0']===null){
-            let newnode = new TrieNode();
-            node.children[number[pos]-'0'] = newnode;
-            newnode.parent = node;
-        }
-        this.del(number, pos+1, node.children[number[pos]-'0']);
     }
 }
