@@ -1,5 +1,5 @@
 # Autocomplete Search - Tries Data Structure Implementation
-<a href="https://yogeshiitm.github.io/autocomplete-search/"><img src="images/screenshot.png"></a>
+<a href="https://yogeshiitm.github.io/Trie-autocomplete-search/"><img src="images/screenshot.png"></a>
 
 - Autocomplete search feature using Trie data structure. 
 - Wrote a Suffix Trie class having 3 methods - insert, delete and search a contact number. 
